@@ -1,0 +1,9 @@
+{
+ "DB_Par":{
+  "host":"localhost",
+	"user":"root",
+	"password":"",
+	"DBName":"anchor_db",
+  "user_table":"user"
+ }
+}
