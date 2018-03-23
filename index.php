@@ -42,8 +42,11 @@ function getCurrentUri()
             require_once 'classes/ObjDAO.class.php';
             $table = $nroutes[0];
             try{
-              $id = $nroutes[1];
-              echo select($table, $id);
+              if(isset($nroutes[1])&&isset($nroutes[2])){
+                $field = $nroutes[1];
+                $val = $nroutes[2];
+                echo select($table, $field, $val);
+              }else echo $msg->toJSON();
 
             }catch(Exception $e){
                 echo $msg->toJSON();
@@ -54,6 +57,15 @@ function getCurrentUri()
             $table = $nroutes[0];
             echo json_encode(insert($table));
             break;
+        case 'PUT'://UPDATE
+            header('Content-Type: application/json');
+            $msg = new Message('400','bad request');
+            if(isset($nroutes[0])&&isset($nroutes[1])){
+              $table = $nroutes[0];
+              $id = $nroutes[1];
+              echo json_encode(update($table,$id,$_PUT));
+            }else echo $msg->toJSON();
+            break;
         default:
             header('Content-Type: application/json');
             $msg = new Message('400','bad request');
@@ -61,9 +73,19 @@ function getCurrentUri()
             break;
     }
 
-    function select($table, $id){
+    function select($table, $field, $val){
           $objDao = new ObjDAO();
-          return $objDao->get($table, $id);
+          return $objDao->get($table, $field, $val);
+    }
+
+    function update($table,$id,$obj){
+      $status = 400;
+      require_once 'classes/ObjDAO.class.php';
+      require_once 'classes/User.class.php';
+      if(count($obj)>0){
+          $objDao = new ObjDAO();
+      }
+      return $status;
     }
 
     function insert($table){

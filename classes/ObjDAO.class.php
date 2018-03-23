@@ -8,8 +8,8 @@ class ObjDAO extends MySqlDAO{
     parent::__construct();
     }
 
-    public function get($table,$id){
-        $res = $this->execQuery( 'SELECT * FROM '.$table.' WHERE id = ?',array($id));
+    public function get($table,$field, $val){
+        $res = $this->execQuery( 'SELECT * FROM '.$table.' WHERE '.$field.' = ?',array($val));
         return $res;
     }
 
@@ -40,6 +40,18 @@ class ObjDAO extends MySqlDAO{
         }
         */
 
+    }
+
+    function edit($table, $id, $obj){
+      $v = array_values((array)$obj);
+      $keys = array_keys((array)$obj);
+      $n_fields = count($v);
+      $sql = "UPDATE TABLE $table SET ";
+      for($i=0; $i < $n_fields; $i++){
+        $sql = $i==$n_fields-1?$sql.$keys[$i]'='$v[$i]:$sql.$keys[$i]'='$v[$i]'?,';
+      }
+      $sql = $sql.' WHERE id = '.$id;
+      return $this->execQuery($sql);
     }
 
 
