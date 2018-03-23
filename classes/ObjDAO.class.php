@@ -46,9 +46,9 @@ class ObjDAO extends MySqlDAO{
       $v = array_values((array)$obj);
       $keys = array_keys((array)$obj);
       $n_fields = count($v);
-      $sql = "UPDATE TABLE $table SET ";
+      $sql = "UPDATE $table SET ";
       for($i=0; $i < $n_fields; $i++){
-        $sql = $i==$n_fields-1?$sql.$keys[$i]'='$v[$i]:$sql.$keys[$i]'='$v[$i]'?,';
+        $sql = $i==$n_fields-1?$sql.$keys[$i].'="'.$v[$i].'"':$sql.$keys[$i].'=""'.$v[$i].'",';
       }
       $sql = $sql.' WHERE id = '.$id;
       return $this->execQuery($sql);

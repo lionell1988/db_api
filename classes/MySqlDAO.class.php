@@ -7,6 +7,7 @@ class MySqlDAO {
     }
 
     protected function execQuery($sql, $params = array()){
+      //echo $sql;
   		$rv = array();
       $msg = new stdClass();
       $msg->code = 400;
@@ -27,10 +28,20 @@ class MySqlDAO {
       			$types = $this->paramsTypes($params);
       			$p->bind_param($types, ...$params);
             if ($p->errno > 0) {
-                printf("errore");
-                exit();
+              $code = $p->errno;
+              $txt = $p->error;
+              @$connection->close();
+              return new Message($code,$txt);
             }
       			$p->execute();
+            if(!$p->execute()){
+              if ($p->errno > 0){
+                $code = $p->errno;
+                $txt = $p->error;
+                @$connection->close();
+                return new Message($code,$txt);
+              }
+            }
             $rs = $p->get_result();
             $rv = $rs->fetch_all(MYSQLI_ASSOC);
             $rs->free();

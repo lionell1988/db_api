@@ -3,6 +3,7 @@
   ROUTING
 **/
 $method = $_SERVER['REQUEST_METHOD'];
+//echo $method;
 require_once 'classes/Message.class.php';
 //echo $method;
 function getCurrentUri()
@@ -63,7 +64,11 @@ function getCurrentUri()
             if(isset($nroutes[0])&&isset($nroutes[1])){
               $table = $nroutes[0];
               $id = $nroutes[1];
-              echo json_encode(update($table,$id,$_PUT));
+              $putdata = json_decode(file_get_contents("php://input"), true);
+              if(isset($putdata))
+                //echo $putdata['token'];
+                echo json_encode(update($table,$id,$putdata));
+              else echo (new Message('400','Error PUT parameters'))->toJSON();
             }else echo $msg->toJSON();
             break;
         default:
@@ -79,17 +84,17 @@ function getCurrentUri()
     }
 
     function update($table,$id,$obj){
-      $status = 400;
       require_once 'classes/ObjDAO.class.php';
+      $status = 400;
       require_once 'classes/User.class.php';
       if(count($obj)>0){
           $objDao = new ObjDAO();
+          return $objDao->edit($table,$id,$obj);
       }
       return $status;
     }
 
     function insert($table){
-      $status = 400;
       require_once 'classes/ObjDAO.class.php';
       require_once 'classes/User.class.php';
       //oggetto di esempio
